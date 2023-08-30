@@ -23,16 +23,15 @@ export class SecondhandService {
     formData.append('description', posting.description)
     formData.append('imageFile', posting.image)
 
-    return this.http.post<Posting>("/", formData)
+    return this.http.post<Posting>("/api/posting/", formData)
   }
 
   getPosting(postingId: string): Observable<Posting> {
-    return this.http.get<Posting>("/" + postingId)
+    return this.http.get<Posting>("/api/posting/" + postingId)
   }
 
-
   confirmPost(posting: Posting): Observable<any> {
-    return this.http.put<any>("/" + posting.postingId, posting)
+    return this.http.put<any>("/api/posting/" + posting.postingId, posting)
   }
 
 }
