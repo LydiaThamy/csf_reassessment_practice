@@ -20,10 +20,10 @@ public class RedisConfig {
     @Value("${spring.data.redis.port}")
     private Optional<Integer> redisPort;
 
-    @Value("${spring.data.redis.username}")
+    @Value("${spring.data.redis.username:}")
     private String redisUsername;
 
-    @Value("${spring.data.redis.password}")
+    @Value("${spring.data.redis.password:}")
     private String redisPassword;
    
     @Bean
@@ -33,11 +33,10 @@ public class RedisConfig {
         config.setHostName(redisHost);
         config.setPort(redisPort.get());
 
-
-        if(!redisUsername.isEmpty() && !redisPassword.isEmpty()){
+        // if(!redisUsername.isEmpty() && !redisPassword.isEmpty()){
             config.setUsername(redisUsername);
             config.setPassword(redisPassword);
-        }
+        // }
        
         config.setDatabase(0);
         final JedisClientConfiguration jedisClient =  JedisClientConfiguration
