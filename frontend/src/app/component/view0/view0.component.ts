@@ -43,9 +43,10 @@ export class View0Component implements OnInit {
       image: this.image.nativeElement.files[0]
     }
 
-    // this.service.postForm(posting)
-    this.service.savePosting(posting).subscribe(
-      data => this.router.navigate(['/post', data.postingId])
-    )
+    this.service.savePosting(posting)
+      .subscribe(data => 
+        this.router.navigate(['/post', data.postingId])
+      )
+
   }
 }

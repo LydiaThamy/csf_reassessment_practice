@@ -1,6 +1,6 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, Subject, tap } from 'rxjs';
+import { Observable, Subject, catchError, tap, throwError } from 'rxjs';
 import { Posting } from '../model/Posting';
 import { Router } from '@angular/router';
 
@@ -11,7 +11,8 @@ export class SecondhandService {
 
   constructor(private http: HttpClient) { }
 
-  posting$!: Observable<Posting>
+
+  postingSaved: boolean = false
 
   savePosting(posting: Posting): Observable<Posting> {
     const formData: FormData = new FormData()
@@ -22,16 +23,16 @@ export class SecondhandService {
     formData.append('description', posting.description)
     formData.append('imageFile', posting.image)
 
-    this.posting$ = this.http.post<Posting>("/", formData)
-    return this.posting$
+    return this.http.post<Posting>("/", formData)
   }
 
   getPosting(postingId: string): Observable<Posting> {
     return this.http.get<Posting>("/" + postingId)
   }
 
+
   confirmPost(posting: Posting): Observable<any> {
-    return this.http.put("/" + posting.postingId, posting)
+    return this.http.put<any>("/" + posting.postingId, posting)
   }
 
 }

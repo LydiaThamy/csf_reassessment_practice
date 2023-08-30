@@ -92,11 +92,15 @@ public class PostingController {
         service.deletePosting(postingId);
 
         // save posting to SQL
-        
+        Boolean postSaved = service.confirmPost(posting);
+
+        if (postSaved == false)  {
+            payload.add("message", "Posting ID " + postingId + " not found");
+            return ResponseEntity.badRequest().body(payload.build().toString());
+        }
 
         // send payload
         payload.add("message", "Accepted " + postingId);
-
         return ResponseEntity.ok(payload.build().toString());
     }
 

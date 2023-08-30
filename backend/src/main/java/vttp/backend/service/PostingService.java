@@ -8,8 +8,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.github.f4b6a3.ulid.UlidCreator;
 
+import vttp.backend.model.Posting;
 import vttp.backend.repository.RedisRepo;
 import vttp.backend.repository.S3Repo;
+import vttp.backend.repository.SqlRepo;
 
 @Service
 public class PostingService {
@@ -19,6 +21,9 @@ public class PostingService {
 
     @Autowired
     private RedisRepo redisRepo;
+
+    @Autowired
+    private SqlRepo sqlRepo;
 
     public String createId() {
         return UlidCreator.getUlid().toString().substring(0, 8);
@@ -56,5 +61,9 @@ public class PostingService {
 
     public void deletePosting(String postingId) {
         redisRepo.deletePosting(postingId);
+    }
+
+    public boolean confirmPost(Posting posting) {
+        return sqlRepo.confirmPost(posting);
     }
 }

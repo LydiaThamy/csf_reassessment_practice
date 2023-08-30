@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -11,34 +12,39 @@ import { SecondhandService } from 'src/app/service/secondhand.service';
 })
 export class View1Component implements OnInit, OnDestroy {
 
-  constructor(private service: SecondhandService, private aRoute: ActivatedRoute, private router: Router) {}
-  
+  constructor(private service: SecondhandService, private aRoute: ActivatedRoute, private router: Router) { }
+
   posting!: Posting
   sub$!: Subscription
-  
-  ngOnInit(): void {
-    if (this.service.posting$ !== undefined) {
-      this.sub$ = this.service.posting$
-        .subscribe(data => {
-        this.posting = data as Posting
-      })
 
-    } else {
-      const postingId: string = this.aRoute.snapshot.params['postingId']
-      this.sub$ = this.service.getPosting(postingId)
-        .subscribe(data => {
-          this.posting = data as Posting
-        })
-    }
+  ngOnInit(): void {
+    const postingId: string = this.aRoute.snapshot.params['postingId']
+    this.sub$ = this.service.getPosting(postingId)
+      .subscribe({
+        next: data => {
+        this.posting = data as Posting
+      },
+        error: (error: HttpErrorResponse) => {
+          alert(JSON.stringify(error["error"]["message"]))
+          this.router.navigate(['/'])
+        }
+      })
   }
 
   confirmPost(): void {
     this.service.confirmPost(this.posting)
-      .subscribe(() => {
-        this.router.navigate(['/confirm', this.posting.postingId])
+      .subscribe({
+        next: () => {
+          this.service.postingSaved = true
+          this.router.navigate(['/confirm', this.posting.postingId])
+        },
+        error: (error: HttpErrorResponse) => {
+          alert(JSON.stringify(error["error"]["message"]))
+          this.router.navigate(['/'])
+        }
       })
   }
-  
+
   ngOnDestroy(): void {
     this.sub$.unsubscribe()
   }
