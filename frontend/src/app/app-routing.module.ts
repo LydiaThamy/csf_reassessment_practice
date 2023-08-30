@@ -6,8 +6,8 @@ import { View2Component } from './component/view2/view2.component';
 
 const routes: Routes = [
   {path: '', component: View0Component},
-  {path: 'post', component: View1Component},
-  {path: 'confirm', component: View2Component},
+  {path: 'post/:postingId', component: View1Component},
+  {path: 'confirm/:postingId', component: View2Component},
   {path: '**', redirectTo: '/', pathMatch: 'full'}
 ];
 

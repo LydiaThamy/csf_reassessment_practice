@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { File } from 'src/app/model/File';
+import { Posting } from 'src/app/model/Posting';
 import { SecondhandService } from 'src/app/service/secondhand.service';
 
 @Component({
@@ -14,6 +14,7 @@ export class View0Component implements OnInit {
   constructor(private fb: FormBuilder, private router: Router, private service: SecondhandService) { }
 
   form!: FormGroup
+  @ViewChild('image') image!: ElementRef
 
   ngOnInit(): void {
     this.createForm()
@@ -31,8 +32,20 @@ export class View0Component implements OnInit {
   }
 
   postForm(): void {
-    const file: File = this.form.value
-    this.service.postForm(file)
-    this.router.navigate(['/post'])
+    const posting: Posting = {
+      postingId: '',
+      postingDate: '',
+      name: this.form.value['name'],
+      email: this.form.value['email'],
+      phone: this.form.value['phone'],
+      title: this.form.value['title'],
+      description: this.form.value['description'],
+      image: this.image.nativeElement.files[0]
+    }
+
+    // this.service.postForm(posting)
+    this.service.savePosting(posting).subscribe(
+      data => this.router.navigate(['/post', data.postingId])
+    )
   }
 }

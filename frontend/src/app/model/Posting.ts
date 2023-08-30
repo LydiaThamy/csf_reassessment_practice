@@ -1,4 +1,6 @@
-export interface File{
+export interface Posting {
+    postingId: string
+    postingDate: string
     name: string
     email: string
     phone: string

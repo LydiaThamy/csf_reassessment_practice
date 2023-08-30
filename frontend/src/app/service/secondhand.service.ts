@@ -1,7 +1,8 @@
-import { Injectable } from '@angular/core';
-import { File } from '../model/File';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Injectable } from '@angular/core';
+import { Observable, Subject, tap } from 'rxjs';
+import { Posting } from '../model/Posting';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -10,12 +11,27 @@ export class SecondhandService {
 
   constructor(private http: HttpClient) { }
 
-  postForm(file: File): Observable<any> {
-    const httpHeaders = {
-      'Content-Type': 'multipart/form-data',
-      'Accept': 'application/json'
-    }
-    return this.http.post<any>("/", file, {headers: httpHeaders})
+  posting$!: Observable<Posting>
+
+  savePosting(posting: Posting): Observable<Posting> {
+    const formData: FormData = new FormData()
+    formData.append('name', posting.name)
+    formData.append('email', posting.email)
+    formData.append('phone', posting.phone)
+    formData.append('title', posting.title)
+    formData.append('description', posting.description)
+    formData.append('imageFile', posting.image)
+
+    this.posting$ = this.http.post<Posting>("/", formData)
+    return this.posting$
+  }
+
+  getPosting(postingId: string): Observable<Posting> {
+    return this.http.get<Posting>("/" + postingId)
+  }
+
+  confirmPost(posting: Posting): Observable<any> {
+    return this.http.put("/" + posting.postingId, posting)
   }
 
 }
